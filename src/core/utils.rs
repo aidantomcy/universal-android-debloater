@@ -55,7 +55,6 @@ pub fn string_to_theme(theme: &str) -> Theme {
     match theme {
         "Dark" => Theme::Dark,
         "Light" => Theme::Light,
-        "Lupin" => Theme::Lupin,
         _ => Theme::Lupin,
     }
 }

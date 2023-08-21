@@ -64,7 +64,7 @@ pub fn adb_shell_command(shell: bool, args: &str) -> Result<String, String> {
     command.args(adb_command);
 
     #[cfg(target_os = "windows")]
-    let command = command.creation_flags(0x08000000); // do not open a cmd window
+    let command = command.creation_flags(0x0800_0000); // do not open a cmd window
 
     match command.output() {
         Err(e) => {
@@ -137,7 +137,7 @@ pub async fn perform_adb_commands(
 pub fn user_flag(user_id: Option<&User>) -> String {
     match user_id {
         Some(user_id) => format!(" --user {}", user_id.id),
-        None => "".to_string(),
+        None => String::new(),
     }
 }
 

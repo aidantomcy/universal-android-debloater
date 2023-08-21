@@ -173,31 +173,27 @@ pub fn get_latest_release() -> Result<Option<Release>, ()> {
 pub fn get_latest_release() -> Result<Option<Release>, ()> {
     debug!("Checking for UAD update");
 
-    match ureq::get("https://api.github.com/repos/0x192/universal-android-debloater/releases")
-        .call()
-    {
-        Ok(res) => {
-            let release: Release = serde_json::from_value(
-                res.into_json::<serde_json::Value>()
-                    .map_err(|_| ())?
-                    .get(0)
-                    .ok_or(())?
-                    .clone(),
-            )
-            .map_err(|_| ())?;
-            if release.tag_name.as_str() != "dev-build"
-                && release.tag_name.as_str() > env!("CARGO_PKG_VERSION")
-            {
-                Ok(Some(release))
-            } else {
-                Ok(None)
+    if let Ok(res) = ureq::get("https://api.github.com/repos/0x192/universal-android-debloater/releases")
+            .call() {
+        let release: Release = serde_json::from_value(
+            res.into_json::<serde_json::Value>()
+                .map_err(|_| ())?
+                .get(0)
+                .ok_or(())?
+                .clone(),
+        )
+        .map_err(|_| ())?;
+        if release.tag_name.as_str() != "dev-build"
+            && release.tag_name.as_str() > env!("CARGO_PKG_VERSION")
+        {
+            Ok(Some(release))
+        } else {
+            Ok(None)
+        }
+    } else {
+                debug!("Failed to check UAD update");
+                Err(())
             }
-        }
-        Err(_) => {
-            debug!("Failed to check UAD update");
-            Err(())
-        }
-    }
 }
 
 /// Extracts the binary from a `tar.gz` archive to `temp_file` path
